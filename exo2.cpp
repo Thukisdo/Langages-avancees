@@ -1,8 +1,9 @@
 #include <iostream>
 
-void swap(int& a, int& b)
+template <typename T>
+void swap(T& a, T& b)
 {
-    int c = a;
+    T c = a;
     a = b;
     b = c;
 }
