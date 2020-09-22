@@ -173,7 +173,7 @@ class Definition {
 
 int main()
 {
-    Definition homer( std::move("Homer"), std::move("Buveur de biere")) ;
+    Definition homer( "Homer", "Buveur de biere") ;
     std::cout << "la definition du mot " << homer.getClef() << " est "<<
     homer.getDef() << std::endl ; 
 } 
