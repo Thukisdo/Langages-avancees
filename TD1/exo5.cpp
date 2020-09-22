@@ -1,3 +1,12 @@
+/** Auteur : Mathys JAM TD1A
+ * Je vous recommande d'essayer par vous meme avant de lire les corrections
+ * Cette correction n'est qu'a titre indicatif, et a ete ecrite par un eleve
+ * 
+ * J'uttilise certaines notions avancés qui ne seront peut etre pas vu en cours
+ * Cependant, elles correspondent a une utilisation correcte du c++
+ */
+
+
 #include <iostream>
 #include <math.h>
 
@@ -61,9 +70,9 @@ class Segment {
 int main()
 {
     Segment test(0, 0, 0, -5) ;
-    std::cout << test.longueur() << std::endl;
-    std::cout << test.estDiagonale() << std::endl;
-    std::cout << test.estHorizontal() << std::endl;
-    std::cout << test.estVertical() << std::endl;
+    std::cout << "Longueur : " << test.longueur() << std::endl;
+    std::cout << "estDiagonale : " << test.estDiagonale() << std::endl;
+    std::cout << "estHorizontal : " << test.estHorizontal() << std::endl;
+    std::cout << "estVerticale: " << test.estVertical() << std::endl;
     return 0;
 }
