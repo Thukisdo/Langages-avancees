@@ -16,14 +16,15 @@ class Point {
     const void afficher() {
         std::cout << "x : " << x << " y : " << y << std::endl;
     };
+    
     const Point& operator=(const Point& p) {
         x = p.x; 
         y = p.y; 
         return *this;
     };
 
-    int getx() {return x;};
-    int gety() {return y;};
+    int getx() const {return x;};
+    int gety() const {return y;};
 };
 
 

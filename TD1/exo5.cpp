@@ -23,8 +23,8 @@ class Point {
         return *this;
     };
 
-    int getx() {return x;};
-    int gety() {return y;};
+    int getx() const {return x;};
+    int gety() const {return y;};
 };
 
 class Segment {
@@ -39,20 +39,20 @@ class Segment {
     const Point& setA(const Point& na) {return a = na;};
     const Point& setB(const Point& nb) {return b = nb;};
 
-    double longueur()
+    double longueur() const
     {
         return sqrt(pow(b.getx() - a.getx(), 2) + pow(b.gety() - a.gety(), 2));
     }
 
-    bool estVertical() {
+    bool estVertical() const {
         return a.getx() == b.getx();
     }
 
-    bool estHorizontal() {
+    bool estHorizontal() const {
         return a.gety() == b.gety();
     }
 
-    bool estDiagonale() {
+    bool estDiagonale() const {
         return abs((b.gety() - a.gety())) == abs((b.getx() - a.getx()));
     }
 };

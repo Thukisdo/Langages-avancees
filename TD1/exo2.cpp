@@ -3,9 +3,9 @@
 template <typename T>
 void swap(T& a, T& b)
 {
-    T c = a;
-    a = b;
-    b = c;
+    T c = std::move(a);
+    a = std::move(b);
+    b = std::move(c);
 }
 
 int main()

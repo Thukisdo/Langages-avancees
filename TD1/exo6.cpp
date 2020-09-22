@@ -5,7 +5,7 @@
 class CString
 {
     private:
-    std::shared_ptr<char> c_str;
+    std::unique_ptr<char[]> c_str;
     size_t len;
     int size;
     static int nbr_chaines;
@@ -13,19 +13,21 @@ class CString
 
     void resize(size_t new_size)
     {
-        auto tmp = std::make_shared<char>(new_size);
-        strcpy(tmp.get(), c_str.get());
+        auto tmp = std::make_unique<char[]>(new_size);
+        if (len > 0)
+            strcpy(tmp.get(), c_str.get());
         size = new_size;
+        c_str = std::move(tmp);
     }
 
     public:
 
     CString() : len(0) {nbr_chaines++;};
-    CString(char* s) 
+    CString(const char* s) 
     {
         len = strlen(s);
         size = len + 1;
-        c_str = std::make_shared<char>(size);
+        c_str = std::make_unique<char[]>(size);
         strcpy(c_str.get(), s);
         nbr_chaines++;
     };
@@ -34,22 +36,21 @@ class CString
     {
         len = 1;
         size = len + 1;
-        c_str = std::make_shared<char>(size);
-        c_str.get()[0] = k;
-        c_str.get()[1] = '\0';
+        c_str = std::make_unique<char[]>(size);
+        c_str[0] = k;
+        c_str[1] = '\0';
         nbr_chaines++;
     }
 
-    CString(const CString& s)
-    {
-        CString(s.c_str.get());
-    }
+    CString(const CString& s) : CString(s.c_str.get()) {}
 
     CString(CString&& s)
     {
         len = s.len;
-        c_str = s.c_str;
-        s.c_str = nullptr;
+        size = s.size;
+        c_str = std::move(s.c_str);
+        s.len = 0;
+        s.size = 0;
     }
 
     static int nbrChaines();
@@ -58,15 +59,17 @@ class CString
     {
         if (len + 1 == size)
             resize(size * 2);
-        c_str.get()[len] = c;
+        c_str[len] = c;
         len++;
-        c_str.get()[len] = '\0';
+        c_str[len] = '\0';
         return *this;
     }
 
     const CString& operator=(const CString& s)
     {
-        CString(s.c_str.get());
+        resize(s.size);
+        len = s.len;
+        strcpy(c_str.get(), s.c_str.get());
         return *this;
     }
 
@@ -74,8 +77,8 @@ class CString
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
-            if ((c_str.get()[i] != s.c_str.get()[i]))
-                return c_str.get()[i] > s.c_str.get()[i];
+            if ((c_str[i] != s.c_str[i]))
+                return c_str[i] > s.c_str[i];
         }
         return true;
     }
@@ -84,8 +87,8 @@ class CString
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
-            if ((c_str.get()[i] != s.c_str.get()[i]))
-                return c_str.get()[i] > s.c_str.get()[i];
+            if ((c_str[i] != s.c_str[i]))
+                return c_str[i] > s.c_str[i];
         }
         return false;
     }
@@ -94,8 +97,8 @@ class CString
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
-            if ((c_str.get()[i] != s.c_str.get()[i]))
-                return c_str.get()[i] < s.c_str.get()[i];
+            if ((c_str[i] != s.c_str[i]))
+                return c_str[i] < s.c_str[i];
         }
         return true;
     }
@@ -104,10 +107,17 @@ class CString
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
-            if ((c_str.get()[i] != s.c_str.get()[i]))
-                return c_str.get()[i] < s.c_str.get()[i];
+            if ((c_str[i] != s.c_str[i]))
+                return c_str[i] < s.c_str[i];
         }
         return false;
+    }
+
+    friend std::ostream& operator<<(std::ostream& stream, const CString& s)
+    {
+        for (int i = 0; i < s.len; i++)
+            stream << s.c_str[i];
+        return stream;
     }
 
     const CString& plusGrand(const CString& s) const
@@ -115,10 +125,10 @@ class CString
         return std::max(*this, s);
     }
 
-    std::shared_ptr<char> getString()
+    const char* getString() const
     {
-        return c_str;
-    }
+        return c_str.get();
+    }   
 };
 
 int CString::nbr_chaines = 0;
@@ -137,7 +147,7 @@ int main()
     std::cout << "nbrChaines" << CString::nbrChaines() << std::endl ;
     //afficher le nombre de chaines créées
     s3 = s1 + 'w';
-    std::cout << "s3=" << s3.getString().get() << std::endl ;
+    std::cout << "s3=" << s3 << std::endl ;
     if( s1 > s2 ) // si s1 > s2 au sens alphabétique
         std::cout << "plus grand" << std::endl ;
     if( s1 <= s2) // si s1 <= s2 au sens alphabétique
