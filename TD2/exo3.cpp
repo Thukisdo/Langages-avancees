@@ -270,6 +270,7 @@ int CString::nbrChaines()
     f(5); on fera appel a f(T&& a) et donc func(int&& a) car 5 est une variable temporaire
 */
 
+
 class Definition
 {
 private:
@@ -480,3 +481,9 @@ int main()
     test.find("Homer")->value.afficher();
     test.find("Variable temporaire")->value.afficher();
 }
+
+// On pourrait énormément améliorer les classes présente dans ce fichier
+// Deja on pourrait rajouter des opérateurs a la classe CString pour par exemple concatener deux string
+// On pourrait rajouter des fonctions a dictionnaires (afficher une définitions, retirer une définitions, réinitialiser le dictionnaire),
+// afficher toutes les définitions ou cherche tout les mots contenant un mot...
+// Le code ici fonctionne trés bien mais pourrait etre amélioré si on envisager sérieusement d'utiliser ces classes plus tard
