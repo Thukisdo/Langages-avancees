@@ -260,7 +260,7 @@ int main()
               << std::endl;
 
     b = std::move(a);
-    std::cout << b << std::endl
+    std::cout << "b : " << b << std::endl
               << std::endl;
 
     VecteurTableau c(b);
