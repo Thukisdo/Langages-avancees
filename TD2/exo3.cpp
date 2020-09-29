@@ -15,7 +15,6 @@
 #include <memory>
 #include <string.h>
 
-
 // Strictement identique au version précedentes
 class CString
 {
@@ -97,7 +96,7 @@ public:
         return *this;
     }
 
-    const CString &operator=(const char* s)
+    const CString &operator=(const char *s)
     {
         len = strlen(s);
         size = len + 1; // on laisse de la place pour '\0'
@@ -108,7 +107,7 @@ public:
     }
 
     // Operateur de comparaisons
-    bool operator>=(const CString& s) const
+    bool operator>=(const CString &s) const
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
@@ -118,7 +117,7 @@ public:
         return true;
     }
 
-    bool operator>(const CString& s) const
+    bool operator>(const CString &s) const
     {
         for (int i = 0; i < std::min(len, s.len); i++)
         {
@@ -128,12 +127,12 @@ public:
         return false;
     }
 
-    bool operator<=(const CString& s) const
+    bool operator<=(const CString &s) const
     {
         return !(*this > s);
     }
 
-    bool operator==(const CString& s) const
+    bool operator==(const CString &s) const
     {
         if (len != s.len)
             return false;
@@ -145,7 +144,7 @@ public:
         return true;
     }
 
-    bool operator<(const CString& s) const
+    bool operator<(const CString &s) const
     {
         return !(*this >= s);
     }
@@ -271,15 +270,14 @@ int CString::nbrChaines()
     f(5); on fera a a f(T&& a) et donc func(int&& a) car 5 est une variable temporaire
 */
 
-
 class Definition
 {
 private:
     CString clef, def;
 
 public:
-    Definition(){
-
+    Definition()
+    {
     }
 
     Definition(Definition &val)
@@ -307,8 +305,8 @@ public:
     }
 
     // Ici, on apelle le constructeurs de CString approprié
-    template<typename T, typename X>
-    Definition(T&& clef, X&& def)
+    template <typename T, typename X>
+    Definition(T &&clef, X &&def)
     {
         this->clef = std::forward<T>(clef);
         this->def = std::forward<X>(def);
@@ -341,10 +339,9 @@ private:
     // insert(Definition&& def)
     // on declare un template qui va assurer les deux fonctions
     template <typename T>
-    void insert(T &&def)
+    bool insert(T &&def)
     {
         // Ici, on doit inserer la définitions dans l'ordre alphabétique
-
 
         std::shared_ptr<elem> old = nullptr;
         auto current = begin;
@@ -354,12 +351,12 @@ private:
         // ou
         // Definition::operator=(Definition&& val)
         // dependament de si T est une variable temporaire ou non
-        tmp->value = std::forward<T>(def); 
+        tmp->value = std::forward<T>(def);
 
         if (begin == nullptr)
         {
             begin = tmp;
-            return;
+            return true;
         }
 
         while (current)
@@ -368,59 +365,112 @@ private:
             {
                 tmp->next = current;
                 old->next = tmp;
-                return;
-            } 
+                return true;
+            }
             if (tmp->value.getClef() == current->value.getClef())
-                return;
+                return false;
             old = current;
             current = current->next;
         }
         // si on atteint la fin de la chaine sans avoir inserer
         old->next = tmp;
+        return true;
     }
 
-    void copy();
-    Definition &get(CString def);
-
-public:
-    Dictionnaire() : m_size(0){};
-    Dictionnaire(Dictionnaire const &val) : m_size(0){};
-    Dictionnaire(Dictionnaire &&val) : m_size(0){};
-
-    // on Pourrait déclarer deux fonctions
-    // operator+=(Definition const& val)
-    // et operator+=(Definition&& val)
-    // A la place, on déclare un template qui remplit les deux fonctions
-    template <typename T>
-    Dictionnaire &operator+=(T &&val)
+    void copy(std::shared_ptr<elem> ptr)
     {
-        insert(std::forward<T>(val)); // Ici, on apelle un autre template
-        m_size++;
-        return *this;
+        if (ptr == nullptr)
+            return;
+        if (!begin)
+        {
+            begin = std::make_shared<elem>();
+            begin->value = ptr->value;
+        }
+        std::shared_ptr<elem> current = begin;
+        while (ptr->next)
+        {
+            if (!current->next)
+                current->next = std::make_shared<elem>();
+            current->next->value = ptr->value;
+            current = current->next;
+        }
     }
 
-    const Definition find(CString const& str)
+    std::shared_ptr<elem> get(CString const& def)
     {
         for (auto current = begin; current != nullptr; current = current->next)
         {
-            if (current->value.getClef() == str)
-                return current->value;
+            if (current->value.getClef() == def)
+                return current;
         }
-        return Definition("str","undefined");
+        return nullptr;
+    }
+
+public:
+    Dictionnaire() : m_size(0){};
+    Dictionnaire(Dictionnaire const &val) : m_size(0)
+    {
+        *this = val;
+    }
+
+    Dictionnaire(Dictionnaire &&val) : m_size(0)
+    {
+        *this = val;
+    }
+
+    Dictionnaire &operator=(Dictionnaire const &val)
+    {
+        m_size = val.m_size;
+        copy(val.begin);
+        return *this;
+    }
+
+    Dictionnaire &operator=(Dictionnaire &&val)
+    {
+        m_size = val.m_size;
+        begin = val.begin;
+        val.begin = nullptr;
+        return *this;
+    }
+
+    // on Pourrait déclarer deux fonctions
+    // add(Definition const& val)
+    // et add(Definition&& val)
+    // A la place, on déclare un template qui remplit les deux fonctions
+    template <typename T>
+    bool add(T &&val)
+    {
+        if (insert(std::forward<T>(val))) // Ici, on apelle un autre template
+        {
+            m_size++;
+            return true;
+        }
+        return false;
+    }
+
+    const std::shared_ptr<const elem> find(CString const &str)
+    {
+        return get(str);
+    }
+
+    unsigned int getSize()
+    {
+        return m_size;
     }
 };
 
 int main()
 {
     Definition homer("Homer", "Buveur de biere");
+    Definition bg("bg", "Thukisdo");
 
     Dictionnaire test;
-    test += homer; // fait appel au template operator+=(Definition const& val)
-    test += homer;
-    test += homer;
-    test += homer;
-    test += Definition("Variable temporaire", "C'est moi !");
-    test += std::move(homer); // fait appel au template operator+=(Definition&& val)
-    test.find("Homer").afficher();
-    test.find("Variable temporaire").afficher();
+    test.add(homer); // fait appel au template operator+=(Definition const& val)
+    test.add(homer);
+    test.add(homer);
+    test.add(bg);
+    test.add(Definition("Variable temporaire", "C'est moi !"));
+    test.add(std::move(homer)); // fait appel au template operator+=(Definition&& val)
+    test.find("Homer")->value.afficher();
+    test.find("Variable temporaire")->value.afficher();
 }
