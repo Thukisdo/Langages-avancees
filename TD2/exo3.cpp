@@ -393,6 +393,7 @@ private:
                 current->next = std::make_shared<elem>();
             current->next->value = ptr->value;
             current = current->next;
+            ptr = ptr->next;
         }
     }
 
@@ -471,6 +472,11 @@ int main()
     test.add(bg);
     test.add(Definition("Variable temporaire", "C'est moi !"));
     test.add(std::move(homer)); // fait appel au template operator+=(Definition&& val)
+    test.find("Homer")->value.afficher();
+    test.find("Variable temporaire")->value.afficher();
+    test.find("bg")->value.afficher();
+
+    Dictionnaire test2(test);
     test.find("Homer")->value.afficher();
     test.find("Variable temporaire")->value.afficher();
 }
