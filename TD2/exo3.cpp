@@ -267,7 +267,7 @@ int CString::nbrChaines()
 
     int a = 5;
     f(a); on fera appel a f(T& a) et donc func(int& a) car a est une variable
-    f(5); on fera a a f(T&& a) et donc func(int&& a) car 5 est une variable temporaire
+    f(5); on fera appel a f(T&& a) et donc func(int&& a) car 5 est une variable temporaire
 */
 
 class Definition
