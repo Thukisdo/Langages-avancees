@@ -14,7 +14,8 @@
 #include <iostream>
 #include <memory>
 #include <string.h>
-
+#include "CString.hpp"
+/*
 // Strictement identique au version précedentes
 class CString
 {
@@ -176,7 +177,7 @@ int CString::nbr_chaines = 0;
 int CString::nbrChaines()
 {
     return nbr_chaines;
-}
+}*/
 
 // =====================================================================
 /* A partir d'ici, j'utilise deux nouvelles notions assez avancés
@@ -353,7 +354,6 @@ private:
         // Definition::operator=(Definition&& val)
         // dependament de si T est une variable temporaire ou non
         tmp->value = std::forward<T>(def);
-
         if (begin == nullptr)
         {
             begin = tmp;
@@ -362,19 +362,17 @@ private:
 
         while (current)
         {
-            if (tmp->value.getClef() < current->value.getClef())
-            {
-                tmp->next = current;
-                old->next = tmp;
-                return true;
-            }
             if (tmp->value.getClef() == current->value.getClef())
                 return false;
+            if (tmp->value.getClef() < current->value.getClef())
+                break;
             old = current;
             current = current->next;
         }
-        // si on atteint la fin de la chaine sans avoir inserer
-        old->next = tmp;
+        tmp->next = current;
+        if (old == nullptr)
+            begin = tmp;
+        else old->next = tmp;
         return true;
     }
 
@@ -468,8 +466,6 @@ int main()
 
     Dictionnaire test;
     test.add(homer); // fait appel au template operator+=(Definition const& val)
-    test.add(homer);
-    test.add(homer);
     test.add(bg);
     test.add(Definition("Variable temporaire", "C'est moi !"));
     test.add(std::move(homer)); // fait appel au template operator+=(Definition&& val)

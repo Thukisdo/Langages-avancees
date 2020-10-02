@@ -15,7 +15,9 @@
 #include <iostream>
 #include <memory>
 #include <string.h>
+#include "CString.hpp"
 
+/*
 class CString
 {
     private:
@@ -155,6 +157,7 @@ int CString::nbrChaines()
 {
     return nbr_chaines;
 }
+*/
 
 int main()
 {
@@ -163,7 +166,7 @@ int main()
     s3 ;
 
     // On utilise une fct static en faisant nomClasse::nomFonction()
-    std::cout << "nbrChaines : " << CString::nbrChaines() << std::endl ;
+    std::cout << "nbrChaines : " << CString::getNbrString() << std::endl ;
     //On utilise l'opérateur + que l'on a définis
     s3 = s1 + 'w';
     std::cout << "s3=" << s3 << std::endl ;
