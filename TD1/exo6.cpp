@@ -30,6 +30,4 @@ int main()
     if( s1 <= s2) // si s1 <= s2 au sens alphabétique
         std::cout << "plus petit" << std::endl ;
     s3 = std::max(s1, s2) ;// retourner s1 si s1>s2, s2 sinon
-    // on pourrait le remplacer par
-    // s3 = std::max(s1, s2);
 } 
