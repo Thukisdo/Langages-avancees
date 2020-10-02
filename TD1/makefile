@@ -18,11 +18,11 @@ exo4.out : exo4.cpp
 exo5.out : exo5.cpp
 	$(cc) $(CFLAGS)  -o $@ $<
 
-exo6.out : exo6.cpp
-	$(cc) $(CFLAGS)  -o $@ $<
+exo6.out : exo6.cpp CString.hpp CString.cpp
+	$(cc) $(CFLAGS)  -o $@ $< CString.cpp
 
-exo7.out : exo7.cpp
-	$(cc) $(CFLAGS)  -o $@ $<
+exo7.out : exo7.cpp CString.hpp CString.cpp
+	$(cc) $(CFLAGS)  -o $@ $< CString.cpp
 
 clear :
 	rm *.out
