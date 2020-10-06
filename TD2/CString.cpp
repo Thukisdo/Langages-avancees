@@ -212,8 +212,10 @@ std::istream &operator>>(std::istream &stream, CString &s)
 {
     char tmp;
     stream >> tmp;
-    while (tmp != '\0')
+    while (tmp != '\0' && tmp != '\n') {
         s += tmp;
+        stream >> tmp;
+    }
     return stream;
 }
 
