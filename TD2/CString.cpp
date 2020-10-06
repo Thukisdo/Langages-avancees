@@ -20,10 +20,12 @@ void CString::resize(size_t new_size)
     m_allocated_size = new_size;
     m_c_str = std::move(tmp);
 }
+
+// Fonction pour réduire la taille du tableau
 void CString::shrink(size_t new_size)
 {
     if (new_size > m_allocated_size)
-        throw std::invalid_argument("Tried to shrink by increasing CString Cstring size");
+        throw std::invalid_argument("Tried to shrink by increasing Cstring size");
     if (new_size == m_allocated_size)
         return;
     auto tmp = std::make_unique<char[]>(new_size);
@@ -62,12 +64,14 @@ CString::CString(char k) : m_len(0), m_allocated_size(0)
     nbr_chaines++;
 }
 
-// On appel le constructeur char*
+// On appel l'assignation de copie
 CString::CString(CString const &str) : m_len(0), m_allocated_size(0)
 {
     *this = str;
     nbr_chaines++;
 }
+
+// On appel l'assignation de mouvement
 CString::CString(CString &&str) : m_len(0), m_allocated_size(0)
 {
     *this = std::move(str);
